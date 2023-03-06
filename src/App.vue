@@ -16,12 +16,10 @@ import MyMap from '@/components/MyMap.vue'
 
 export default {
     components: { MyForm, MyMap },
-    data() {
-        return {
-            from: '',
-            to: ''
-        }
-    },
+    data: () => ({
+        from: '',
+        to: ''
+    }),
     methods: {
         init(from, to) {
             this.from = from,

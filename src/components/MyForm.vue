@@ -16,13 +16,11 @@
 
 <script>
 export default {
-    data() {
-        return {
-            from: '',
-            to: '',
-            exception: false
-        }
-    },
+    data: () => ({
+        from: '',
+        to: '',
+        exception: false
+    }),
     methods: {
         buildRoute() {
             if (this.from.trim() && this.to.trim()) {
