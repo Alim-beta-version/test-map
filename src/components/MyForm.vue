@@ -1,36 +1,43 @@
 <template>
     <form @submit.prevent>
-        <div>
-            <input type="text" placeholder="Откуда"
-                v-model="from">
-             → 
-            <input type="text" placeholder="Куда"
-                v-model="to">
+        <div class="forPhone">
+            <input type="text" placeholder="Откуда" list="arrayOfAudiences"
+                v-model="from" @keypress="$event => validate($event)" required>
+            <span class="right">→</span>
+            <span class="down">↓</span>
+            <input type="text" placeholder="Куда" list="arrayOfAudiences"
+                v-model.trim="to" @keypress="$event => validate($event)" required>
+            <datalist id="arrayOfAudiences">
+                <optgroup v-for="ms in mas" :key="ms.id">
+                    <option v-for="m in ms.audiences" :key="m.name">{{ m.name }}</option>
+                </optgroup>
+            </datalist>
         </div>
-        <span v-if="exception">Заполните все поля!</span>
-        <button @click="buildRoute">
+        <button @click="clickBtn">
             Проложить маршрут
         </button>
     </form>
 </template>
 
 <script>
+import { array } from './Array.js'
+
 export default {
     data: () => ({
         from: '',
         to: '',
-        exception: false
+        mas: array
     }),
     methods: {
-        buildRoute() {
-            if (this.from.trim() && this.to.trim()) {
-                this.$emit('ok', this.from, this.to)
-                this.from = '',
-                this.to = '',
-                this.exception = false;
-            }
+        clickBtn() {
+            this.$emit('ok', this.from, this.to)
+        },
+        validate(e) {
+            let char = String.fromCharCode(e.keyCode);
+            if (/^[А-Ба-б0-9]+$/.test(char))
+                return true;
             else
-                this.exception = true;
+                e.preventDefault();
         }
     }
 }
@@ -48,10 +55,7 @@ export default {
         border-radius: 10px;
     }
     span {
-        color: red;
-        font-weight: bold;
         font-size: 20px;
-        margin-top: 20px;
     }
     button {
         width: max-content;
@@ -66,5 +70,30 @@ export default {
         background-color: gainsboro;
         color: black;
         border: 2px black solid;
+        box-shadow: 0 0 10px 1px gray;
+    }
+    .forPhone {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    .right {
+        display: block;
+        margin: 0 10px;
+    }
+    .down {
+        display: none;
+    }
+    @media (max-width: 500px) {
+        .forPhone {
+            flex-direction: column;
+        }
+        .right {
+            display: none;
+        }
+        .down {
+            display: block;
+            margin: 5px 0;
+        }
     }
 </style>

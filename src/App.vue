@@ -1,12 +1,8 @@
 <template>
     <div class="all">
         <h1>Навигация по БГТУ</h1>
-        <MyForm
-            @ok="init"
-        />
-        <MyMap
-
-        />
+        <MyForm @ok="init" />
+        <MyMap />
     </div>
 </template>
 
@@ -23,8 +19,7 @@ export default {
     methods: {
         init(from, to) {
             this.from = from,
-            this.to = to,
-            console.log(from, to)
+            this.to = to
         }
     }
 }
