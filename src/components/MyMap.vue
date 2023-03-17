@@ -1,19 +1,15 @@
+<script setup>
+import { ref } from 'vue'
+import { YandexMap } from 'vue-yandex-maps'
+
+const coord = ref([53.304437, 34.303867])
+const zoom = ref(16)
+</script>
+
 <template>
     <yandex-map :coordinates="coord" :zoom="zoom">
     </yandex-map>
 </template>
-
-<script>
-import { YandexMap } from 'vue-yandex-maps'
-
-export default {
-    components: { YandexMap },
-    data: () => ({
-        coord: [53.304437, 34.303867],
-        zoom: 16,
-    }),
-}
-</script>
 
 <style scoped>
     .yandex-container {

@@ -1,5 +1,5 @@
 // test naming
-export const array = [{
+export const items = [{
     id: 0,
     name: "Корпус 1",
     audiences: [

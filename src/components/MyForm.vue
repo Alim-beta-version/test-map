@@ -1,47 +1,38 @@
+<script setup>
+import { ref } from 'vue'
+import { items } from './Array.js'
+
+const from = ref('')
+const to = ref('')
+
+const validate = (event) => {
+    let char = event.key;
+    if (/^[А-Ба-б0-9]+$/.test(char))
+        return true;
+    else
+        event.preventDefault();
+}
+</script>
+
 <template>
     <form @submit.prevent>
         <div class="forPhone">
             <input type="text" placeholder="Откуда" list="arrayOfAudiences"
-                v-model="from" @keypress="$event => validate($event)" required>
+                v-model.lazy="from" @keydown="validate" required />
             <span class="right">→</span>
             <span class="down">↓</span>
             <input type="text" placeholder="Куда" list="arrayOfAudiences"
-                v-model.trim="to" @keypress="$event => validate($event)" required>
+                v-model.lazy="to" @keydown="validate" required />
             <datalist id="arrayOfAudiences">
-                <optgroup v-for="ms in mas" :key="ms.id">
+                <optgroup v-for="ms in items" :key="ms.id">
                     <option v-for="m in ms.audiences" :key="m.name">{{ m.name }}</option>
                 </optgroup>
             </datalist>
         </div>
-        <button @click="clickBtn">
-            Проложить маршрут
-        </button>
+        
+        <button @click="$emit('propsEvent', from, to)">Проложить маршрут</button>
     </form>
 </template>
-
-<script>
-import { array } from './Array.js'
-
-export default {
-    data: () => ({
-        from: '',
-        to: '',
-        mas: array
-    }),
-    methods: {
-        clickBtn() {
-            this.$emit('ok', this.from, this.to)
-        },
-        validate(e) {
-            let char = String.fromCharCode(e.keyCode);
-            if (/^[А-Ба-б0-9]+$/.test(char))
-                return true;
-            else
-                e.preventDefault();
-        }
-    }
-}
-</script>
 
 <style scoped>
     form {

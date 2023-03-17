@@ -1,29 +1,24 @@
-<template>
-    <div class="all">
-        <h1>Навигация по БГТУ</h1>
-        <MyForm @ok="init" />
-        <MyMap />
-    </div>
-</template>
-
-<script>
+<script setup>
+import { ref } from 'vue'
 import MyForm from '@/components/MyForm.vue'
 import MyMap from '@/components/MyMap.vue'
 
-export default {
-    components: { MyForm, MyMap },
-    data: () => ({
-        from: '',
-        to: ''
-    }),
-    methods: {
-        init(from, to) {
-            this.from = from,
-            this.to = to
-        }
-    }
+const from = ref('')
+const to = ref('')
+
+const prorsPlace = (f, t) => {
+    from.value = f
+    to.value = t
 }
 </script>
+
+<template>
+    <div class="all">
+        <h1>Навигация по БГТУ</h1>
+        <MyForm @propsEvent="prorsPlace" />
+        <MyMap />
+    </div>
+</template>
 
 <style scoped>
     .all {
