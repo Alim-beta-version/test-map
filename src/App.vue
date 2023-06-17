@@ -6,7 +6,7 @@ import MyMap from '@/components/MyMap.vue'
 const from = ref('')
 const to = ref('')
 
-const prorsPlace = (f, t) => {
+const propsItems = (f, t) => {
     from.value = f
     to.value = t
 }
@@ -15,8 +15,8 @@ const prorsPlace = (f, t) => {
 <template>
     <div class="all">
         <h1>Навигация по БГТУ</h1>
-        <MyForm @propsEvent="prorsPlace" />
-        <MyMap />
+        <MyForm @propsEvent="propsItems" />
+        <MyMap :start="from" :end="to"/>
     </div>
 </template>
 

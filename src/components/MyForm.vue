@@ -1,16 +1,30 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { items } from './Array.js'
 
 const from = ref('')
 const to = ref('')
+const error = ref(false)
+const isEmpty = computed(() => {
+    return from.value === '' || to.value === '';
+});
 
-const validate = (event) => {
-    let char = event.key;
-    if (/^[А-Ба-б0-9]+$/.test(char))
-        return true;
+const validate = (val) => {
+    const regex = /^[а-яА-Я1-9][\d]*$/;
+    const isValid = regex.test(val);
+
+    if (!isValid && from.value != '' && to.value != '')
+        error.value = true;
     else
-        event.preventDefault();
+        error.value = false;        
+}
+
+const find = (target) => {
+    for (const corpus of items)
+        for (const element of corpus.audiences)
+            if (element.name === target)
+                return corpus.coords;
+    return null;
 }
 </script>
 
@@ -18,19 +32,18 @@ const validate = (event) => {
     <form @submit.prevent>
         <div class="forPhone">
             <input type="text" placeholder="Откуда" list="arrayOfAudiences"
-                v-model.lazy="from" @keydown="validate" required />
-            <span class="right">→</span>
-            <span class="down">↓</span>
+                v-model="from" @input="validate(from)" required />
+            <span class="arrow">→</span>
             <input type="text" placeholder="Куда" list="arrayOfAudiences"
-                v-model.lazy="to" @keydown="validate" required />
+                v-model="to" @input="validate(to)" required />
             <datalist id="arrayOfAudiences">
                 <optgroup v-for="ms in items" :key="ms.id">
                     <option v-for="m in ms.audiences" :key="m.name">{{ m.name }}</option>
                 </optgroup>
             </datalist>
         </div>
-        
-        <button @click="$emit('propsEvent', from, to)">Проложить маршрут</button>
+        <span v-if="error" style="color: red; margin-top: 20px;">Некорректный ввод. Оба поля обязательны и ограничены символами и их порядком (примеры: а228, Д, 137)</span>
+        <button :disabled="isEmpty" @click="$emit('propsEvent', find(from.toUpperCase()), find(to.toUpperCase()))">Проложить маршрут</button>
     </form>
 </template>
 
@@ -45,45 +58,35 @@ const validate = (event) => {
         border: 1px gray solid;
         border-radius: 10px;
     }
-    span {
-        font-size: 20px;
-    }
     button {
         width: max-content;
         margin: 20px 0;
         padding: 10px 20px;
         background: none;
-        color: teal;
+        color: black;
         border: 2px gray solid;
         border-radius: 10px;
     }
     button:hover {
-        background-color: gainsboro;
+        background-color: aqua;
         color: black;
-        border: 2px black solid;
-        box-shadow: 0 0 10px 1px gray;
+        border-color: aqua;
     }
     .forPhone {
         display: flex;
         flex-direction: row;
         align-items: center;
     }
-    .right {
-        display: block;
+    .arrow {
         margin: 0 10px;
-    }
-    .down {
-        display: none;
+        font-size: 20px;
     }
     @media (max-width: 500px) {
         .forPhone {
             flex-direction: column;
         }
-        .right {
-            display: none;
-        }
-        .down {
-            display: block;
+        .arrow {
+            transform: rotate(90deg);
             margin: 5px 0;
         }
     }
