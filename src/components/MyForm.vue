@@ -1,29 +1,42 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { items } from './Array.js'
 
 const from = ref('')
 const to = ref('')
-const error = ref(false)
-const isEmpty = computed(() => {
-    return from.value === '' || to.value === '';
-});
+const errorText = ref('')
+
+const swap = () => {
+    [from.value, to.value] = [to.value, from.value];
+}
 
 const validate = (val) => {
-    const regex = /^[а-яА-Я1-9][\d]*$/;
+    const regex = /^[а-яА-Я1-9]\d{0,3}$/;
     const isValid = regex.test(val);
 
-    if (!isValid && from.value != '' && to.value != '')
-        error.value = true;
+    if (!isValid && val)
+        errorText.value = "Некорректный ввод. Поля ограничены кириллицей, цифрами и их порядком (до 4-х символов, примеры: а228, д, 137)";
     else
-        error.value = false;        
+        errorText.value = '';
 }
 
 const find = (target) => {
-    for (const corpus of items)
-        for (const element of corpus.audiences)
-            if (element.name === target)
+    let fromUper = from.value.toUpperCase();
+    let toUpper = to.value.toUpperCase();
+
+    for (let corpus of items)
+        for (let element of corpus.audiences)
+            if (element.name === target.toUpperCase() && fromUper !== toUpper)
                 return corpus.coords;
+
+    if (fromUper && toUpper) {
+        if (fromUper === toUpper)
+            errorText.value = "Нет смысла в таком маршруте!";
+        else
+            errorText.value = "Таких мест не найдено, пожалуйста, проверьте правильность введённых данных.";
+    }
+    else
+        errorText.value = "Заполните все обязательные поля!";
     return null;
 }
 </script>
@@ -32,18 +45,18 @@ const find = (target) => {
     <form @submit.prevent>
         <div class="forPhone">
             <input type="text" placeholder="Откуда" list="arrayOfAudiences"
-                v-model="from" @input="validate(from)" required />
-            <span class="arrow">→</span>
+                v-model="from" @input="validate(from)" required/>
+            <span class="arrow" @click="swap">→</span>
             <input type="text" placeholder="Куда" list="arrayOfAudiences"
-                v-model="to" @input="validate(to)" required />
+                v-model="to" @input="validate(to)" required/>
             <datalist id="arrayOfAudiences">
                 <optgroup v-for="ms in items" :key="ms.id">
                     <option v-for="m in ms.audiences" :key="m.name">{{ m.name }}</option>
                 </optgroup>
             </datalist>
         </div>
-        <span v-if="error" style="color: red; margin-top: 20px;">Некорректный ввод. Оба поля обязательны и ограничены символами и их порядком (примеры: а228, Д, 137)</span>
-        <button :disabled="isEmpty" @click="$emit('propsEvent', find(from.toUpperCase()), find(to.toUpperCase()))">Проложить маршрут</button>
+        <span v-if="errorText !== ''" style="color: red; margin-top: 20px;">{{ errorText }}</span>
+        <button @click="$emit('propsEvent', find(from), find(to))">Проложить маршрут</button>
     </form>
 </template>
 
@@ -80,6 +93,9 @@ const find = (target) => {
     .arrow {
         margin: 0 10px;
         font-size: 20px;
+    }
+    .arrow:hover {
+        cursor: pointer;
     }
     @media (max-width: 500px) {
         .forPhone {

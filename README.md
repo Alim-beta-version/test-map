@@ -18,4 +18,4 @@ npm run build
 npm run lint
 ```
 ### Настройка конфигурации
-Нажми на меня! [Ссылка на конфигурацию](https://cli.vuejs.org/config/).
+[Нажми на меня!](https://cli.vuejs.org/config/).

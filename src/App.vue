@@ -7,8 +7,10 @@ const from = ref('')
 const to = ref('')
 
 const propsItems = (f, t) => {
-    from.value = f
-    to.value = t
+    if (f && t) {
+        from.value = f
+        to.value = t
+    }
 }
 </script>
 
