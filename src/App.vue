@@ -3,13 +3,13 @@ import { ref } from 'vue'
 import MyForm from '@/components/MyForm.vue'
 import MyMap from '@/components/MyMap.vue'
 
-const from = ref('')
-const to = ref('')
+let from = ref('')
+let to = ref('')
 
 const propsItems = (f, t) => {
     if (f && t) {
-        from.value = f
-        to.value = t
+        from.value = f;
+        to.value = t;
     }
 }
 </script>
@@ -18,7 +18,7 @@ const propsItems = (f, t) => {
     <div class="all">
         <h1>Навигация по БГТУ</h1>
         <MyForm @propsEvent="propsItems" />
-        <MyMap :start="from" :end="to"/>
+        <MyMap :start="from" :end="to" />
     </div>
 </template>
 

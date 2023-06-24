@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { items } from './Array.js'
+import { items } from './Array.json'
 
-const from = ref('')
-const to = ref('')
-const errorText = ref('')
+let from = ref('')
+let to = ref('')
+let errorText = ref('')
 
 const swap = () => {
     [from.value, to.value] = [to.value, from.value];
@@ -21,13 +21,18 @@ const validate = (val) => {
 }
 
 const find = (target) => {
-    let fromUper = from.value.toUpperCase();
-    let toUpper = to.value.toUpperCase();
+    const fromUper = from.value.toUpperCase();
+    const toUpper = to.value.toUpperCase();
 
     for (let corpus of items)
-        for (let element of corpus.audiences)
-            if (element.name === target.toUpperCase() && fromUper !== toUpper)
-                return corpus.coords;
+        for (let element of corpus.floor)
+            for (let audit of element.audiences)
+                if (audit.name === target.toUpperCase() && fromUper !== toUpper)
+                    return {
+                        coords: corpus.coords,
+                        floor: element.num,
+                        audience: audit.name,
+                    };
 
     if (fromUper && toUpper) {
         if (fromUper === toUpper)
@@ -37,6 +42,7 @@ const find = (target) => {
     }
     else
         errorText.value = "Заполните все обязательные поля!";
+
     return null;
 }
 </script>
@@ -51,11 +57,15 @@ const find = (target) => {
                 v-model="to" @input="validate(to)" required/>
             <datalist id="arrayOfAudiences">
                 <optgroup v-for="ms in items" :key="ms.id">
-                    <option v-for="m in ms.audiences" :key="m.name">{{ m.name }}</option>
+                    <template v-for="m in ms.floor" :key="m.num">
+                        <option v-for="audience in m.audiences" :key="audience.name">
+                            {{ audience.name }}
+                        </option>
+                    </template>
                 </optgroup>
             </datalist>
         </div>
-        <span v-if="errorText !== ''" style="color: red; margin-top: 20px;">{{ errorText }}</span>
+        <span v-if="errorText" style="color: red; margin-top: 20px; text-align: center;">{{ errorText }}</span>
         <button @click="$emit('propsEvent', find(from), find(to))">Проложить маршрут</button>
     </form>
 </template>
