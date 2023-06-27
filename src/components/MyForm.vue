@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { items } from './Array.json'
-
+// По названию переменных и методов всё понятно
 let from = ref('')
 let to = ref('')
 let errorText = ref('')
@@ -11,15 +11,18 @@ const swap = () => {
 }
 
 const validate = (val) => {
-    const regex = /^[а-яА-Я1-9]\d{0,3}$/;
+    // Правило валидации
+    const regex = /^[а-яА-Я0-9 ,]*$/;
     const isValid = regex.test(val);
 
     if (!isValid && val)
-        errorText.value = "Некорректный ввод. Поля ограничены кириллицей, цифрами и их порядком (до 4-х символов, примеры: а228, д, 137)";
+        errorText.value = "Некорректный ввод. Поля ограничены кириллицей и цифрами (примеры: а228, д, 137, Столовая)";
     else
         errorText.value = '';
 }
-
+// Нахождение аудитории по введённым данным в input поле
+// и возвращение объекта для отправления в App.vue -> MyMap.vue,
+// иначе составляем текст ошибки и возвращаем null
 const find = (target) => {
     const fromUper = from.value.toUpperCase();
     const toUpper = to.value.toUpperCase();
@@ -27,8 +30,9 @@ const find = (target) => {
     for (let corpus of items)
         for (let element of corpus.floor)
             for (let audit of element.audiences)
-                if (audit.name === target.toUpperCase() && fromUper !== toUpper)
+                if (audit.name.toUpperCase() === target.toUpperCase() && fromUper !== toUpper)
                     return {
+                        corpusNum: corpus.id - 1,
                         coords: corpus.coords,
                         floor: element.num,
                         audience: audit.name,
@@ -66,6 +70,7 @@ const find = (target) => {
             </datalist>
         </div>
         <span v-if="errorText" style="color: red; margin-top: 20px; text-align: center;">{{ errorText }}</span>
+        <!-- Отправка объектов при нахождении совпадения в массиве -->
         <button @click="$emit('propsEvent', find(from), find(to))">Проложить маршрут</button>
     </form>
 </template>
